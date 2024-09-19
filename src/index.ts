@@ -64,7 +64,7 @@ namespace CommandIDs {
   /**
    * Opens the URL to deploy the application with pre-populated fields
    */
-  export const deployApp = 'nebari:deploy-app';
+  export const deployApp = 'jhub-apps:deploy-app';
 }
 
 interface IOpenProxyArgs {
@@ -202,39 +202,6 @@ const commandsPlugin: JupyterFrontEndPlugin<void> = {
   }
 };
 
-const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
-  id: 'jhub-apps-integration:commands',
-  description: 'Adds additional commands used by jhub apps.',
-  autoStart: true,
-  requires: [],
-  activate: async (app: JupyterFrontEnd) => {
-
-    const openURL = (url: string) => {
-      try {
-        window.open(url, '_blank', 'noopener,noreferrer');
-      } catch (error) {
-        console.warn('Error opening URL:', url, error);
-      }
-    }
-
-    app.commands.addCommand(CommandIDs.deployApp, {
-      execute: async () => {
-        const currentWidget = app.shell.currentWidget;
-        const currentNotebookPath =
-          currentWidget && currentWidget instanceof DocumentWidget
-            ? currentWidget.context.path
-            : '';
-        const deployUrl = `/services/japps/create-app?filepath=${encodeURIComponent(currentNotebookPath)}`;
-
-        await openURL(deployUrl);
-        
-      },
-      label: () => 'Deploy App',
-      icon: deployAppIcon
-    });
-  }
-};  
-
 const logoPlugin: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-nebari-mode:logo',
   description: 'Sets the application logo.',
@@ -247,6 +214,40 @@ const logoPlugin: JupyterFrontEndPlugin<void> = {
   ) => {
     const logo = new NebariLogo({ paths });
     shell.add(logo, 'top', { rank: 0 });
+  }
+};
+
+const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
+  id: 'jupyterlab-nebari-mode:jhub-apps-integration',
+  description: 'Deploys an application with (almost) one click.',
+  autoStart: true,
+  requires: [],
+  activate: async (app: JupyterFrontEnd) => {
+    const openURL = (url: string) => {
+      try {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } catch (error) {
+        console.warn('Error opening URL:', url, error);
+      }
+    };
+
+    app.commands.addCommand(CommandIDs.deployApp, {
+      execute: async () => {
+        const currentWidget = app.shell.currentWidget;
+        const currentNotebookPath =
+          currentWidget && currentWidget instanceof DocumentWidget
+            ? currentWidget.context.path
+            : '';
+        const deployUrl = `/services/japps/create-app?filepath=${encodeURIComponent(currentNotebookPath)}`;
+
+        await openURL(deployUrl);
+      },
+      label: () => 'Deploy App',
+      icon: () => {
+        // Add logic to only display the icon if the command is not in the main menu
+        return deployAppIcon;
+      }
+    });
   }
 };
 
