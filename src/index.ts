@@ -8,7 +8,7 @@ import { ServerConnection } from '@jupyterlab/services';
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { Widget } from '@lumino/widgets';
 import { CommandRegistry } from '@lumino/commands';
-import { nebariIcon } from './icons';
+import { nebariIcon, deployAppIcon } from './icons';
 import { DocumentWidget } from '@jupyterlab/docregistry';
 
 class NebariLogo extends Widget {
@@ -230,7 +230,7 @@ const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
         
       },
       label: () => 'Deploy App',
-      iconClass: () => 'nebari-DeployAppIcon'
+      icon: deployAppIcon
     });
   }
 };  
