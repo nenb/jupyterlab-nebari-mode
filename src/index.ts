@@ -62,10 +62,6 @@ namespace CommandIDs {
    */
   export const runFirstEnabled = 'nebari:run-first-enabled';
   /**
-   * Opens a URL in a new tab.
-   */
-  export const openURL = 'nebari:open-url';
-  /**
    * Opens the URL to deploy the application with pre-populated fields
    */
   export const deployApp = 'nebari:deploy-app';
@@ -76,17 +72,6 @@ interface IOpenProxyArgs {
    * Name of the server process to open.
    */
   name?: string;
-}
-
-interface IOpenURLArgs {
-  /**
-   * URL to open.
-   */
-  url?: string;
-  /**
-   * Alias for the URL.
-   */
-  alias?: string;
 }
 
 interface ICommandDescription
@@ -214,29 +199,23 @@ const commandsPlugin: JupyterFrontEndPlugin<void> = {
         return returnFirstEnabled(args, 'className') ?? '';
       }
     });
+  }
+};
 
-    const resolveURLAndAlias = (args: IOpenURLArgs = {}) => {
-      const { url = '/', alias } = args;
-      const resolvedAlias =
-        alias || (url === '/' ? 'JupyterHub' : 'user-configured URL');
-      return { url, alias: resolvedAlias };
-    };
+const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
+  id: 'jhub-apps-integration:commands',
+  description: 'Adds additional commands used by jhub apps.',
+  autoStart: true,
+  requires: [],
+  activate: async (app: JupyterFrontEnd) => {
 
-    app.commands.addCommand(CommandIDs.openURL, {
-      execute: async (args: IOpenURLArgs) => {
-        const { url } = resolveURLAndAlias(args);
-        try {
-          window.open(url, '_blank', 'noopener,noreferrer');
-        } catch (error) {
-          console.warn('Error opening URL:', url, error);
-          return;
-        }
-      },
-      label: (args: IOpenURLArgs = {}) => {
-        const { alias } = resolveURLAndAlias(args);
-        return `Open ${alias}`;
+    const openURL = (url: string) => {
+      try {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } catch (error) {
+        console.warn('Error opening URL:', url, error);
       }
-    });
+    }
 
     app.commands.addCommand(CommandIDs.deployApp, {
       execute: async () => {
@@ -247,15 +226,14 @@ const commandsPlugin: JupyterFrontEndPlugin<void> = {
             : '';
         const deployUrl = `/services/japps/create-app?filepath=${encodeURIComponent(currentNotebookPath)}`;
 
-        await app.commands.execute(CommandIDs.openURL, {
-          url: deployUrl
-        });
+        await openURL(deployUrl);
+        
       },
       label: () => 'Deploy App',
       iconClass: () => 'nebari-DeployAppIcon'
     });
   }
-};
+};  
 
 const logoPlugin: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-nebari-mode:logo',
@@ -272,6 +250,6 @@ const logoPlugin: JupyterFrontEndPlugin<void> = {
   }
 };
 
-const plugins = [commandsPlugin, logoPlugin];
+const plugins = [commandsPlugin, logoPlugin, jhubAppsPlugin];
 
 export default plugins;
