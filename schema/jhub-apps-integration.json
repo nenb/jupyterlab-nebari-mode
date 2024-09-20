@@ -1,33 +1,32 @@
 {
-    "jupyter.lab.menus": {
-      "main": [
-        {
-          "id": "jp-mainmenu-deploy-app",
-          "label": "Services",
-          "disabled": false,
-          "rank": 80,
-          "items": [
-            {
-              "command": "jhub-apps:deploy-app",
-              "args": {
-                "origin": "main-menu"
-              }
+  "jupyter.lab.menus": {
+    "main": [
+      {
+        "id": "jp-mainmenu-services",
+        "label": "Services",
+        "rank": 1000,
+        "items": [
+          {
+            "command": "jhub-apps:deploy-app",
+            "args": {
+              "origin": "main-menu"
             }
-          ]
-        }
-      ],
-      "context": [
+          }
+        ]
+      }
+    ],
+    "context": [
       {
         "command": "jhub-apps:deploy-app",
         "args": {
-                "origin": "context-menu"
-              },
+          "origin": "context-menu"
+        },
         "selector": ".jp-DirListing-item[data-isdir=\"false\"]",
         "rank": 3
       }
     ]
   },
-    "jupyter.lab.toolbars": {
+  "jupyter.lab.toolbars": {
     "Notebook": [
       {
         "name": "deploy-app",
@@ -35,6 +34,6 @@
       }
     ]
   },
-    "additionalProperties": false,
-    "type": "object"
+  "additionalProperties": false,
+  "type": "object"
 }
