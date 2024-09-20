@@ -16,7 +16,7 @@
       "context": [
       {
         "command": "jhub-apps:deploy-app",
-        "selector": ".jp-DirListing-item",
+        "selector": ".jp-DirListing-item[data-file-type=\"text\"]",
         "rank": 3
       }
     ]
