@@ -93,6 +93,10 @@ interface IRunFirstEnabledArgs {
   commands?: ICommandDescription[];
 }
 
+interface IDeployAppArgs {
+  origin?: string;
+}
+
 const commandsPlugin: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-nebari-mode:commands',
   description: 'Adds additional commands used by nebari.',
@@ -223,11 +227,24 @@ const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   requires: [],
   activate: async (app: JupyterFrontEnd) => {
-    const openURL = (url: string) => {
+    const openURL = async (url: string) => {
       try {
         window.open(url, '_blank', 'noopener,noreferrer');
       } catch (error) {
-        console.warn('Error opening URL:', url, error);
+        console.warn(`Error opening ${url}: ${error}`);
+      }
+    };
+
+    const calculateIcon = (args: IDeployAppArgs) => {
+      switch (args.origin) {
+        case 'main-menu':
+          return undefined;
+        case 'context-menu':
+          return deployAppIcon;
+        case undefined:
+          return deployAppIcon;
+        default:
+          return deployAppIcon;
       }
     };
 
@@ -242,10 +259,9 @@ const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
 
         await openURL(deployUrl);
       },
-      label: () => 'Deploy App',
-      icon: () => {
-        // Add logic to only display the icon if the command is not in the main menu
-        return deployAppIcon;
+      label: 'Deploy App',
+      icon: args => {
+        return calculateIcon(args);
       }
     });
   }

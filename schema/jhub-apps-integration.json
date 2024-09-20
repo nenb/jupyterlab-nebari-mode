@@ -8,7 +8,10 @@
           "rank": 80,
           "items": [
             {
-              "command": "jhub-apps:deploy-app"
+              "command": "jhub-apps:deploy-app",
+              "args": {
+                "origin": "main-menu"
+              }
             }
           ]
         }
@@ -16,7 +19,10 @@
       "context": [
       {
         "command": "jhub-apps:deploy-app",
-        "selector": ".jp-DirListing-item[data-file-type=\"text\"]",
+        "args": {
+                "origin": "context-menu"
+              },
+        "selector": ".jp-DirListing-item[data-isdir=\"false\"]",
         "rank": 3
       }
     ]
